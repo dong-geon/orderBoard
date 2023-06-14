@@ -1,5 +1,6 @@
 package com.nexacro.orderBoard.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,19 @@ import com.nexacro.orderBoard.object.Board;
  *      최초작성
  */
 public interface UidapterBoardService {
+	
+	void deleteOrdList(Map<String, Object> ds_delList);
+	
+	void updateOrdList(Map<String, Object> ds_updOrd);
+	
+	void insertOrdList(Map<String, Object> ds_regOrd);
 
+	ArrayList<Map<String, Object>> selectItemList();
+	
+	ArrayList<Map<String, Object>> selectOrdList(Map<String, Object> ds_searchList);
+	
+	ArrayList<Map<String,Object>> selectCommonCode(Map<String, Object> ds_search);
+	
 	List<Map<String, Object>> retrieve_datalist_map(Map<String, String> board);
 
 	List<Board> retrieve_datalist(Board board);
@@ -32,4 +45,5 @@ public interface UidapterBoardService {
 	void update_datalist_map(List<Map<String, Object>> boardList);
 	
 	int selectUserCount();
+
 }

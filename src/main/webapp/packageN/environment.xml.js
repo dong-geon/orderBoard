@@ -30,6 +30,7 @@ if (nexacro.Environment)
         nexacro._addService("pattern", "form", "./pattern/", "session", null, "", "0", "0");
         nexacro._addService("xcssrc", "file", "./_resource_/_xcss_/", "session", null, "", "", "");
         nexacro._addService("images", "file", "./images/", "session", null, "", "0", "0");
+        nexacro._addService("Board", "form", "./Board/", "session", null, "", "0", "0");
     	nexacro._component_uri = (nexacro._arg_compurl ? nexacro._arg_compurl : "./nexacrolib/component/");
     	nexacro._theme_uri = "./_resource_/_theme_/";
     	// load components

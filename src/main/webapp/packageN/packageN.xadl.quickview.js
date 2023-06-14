@@ -199,7 +199,7 @@
         	nexacro.setEnvironmentVariable("gvRunMode", nRunMode);
 
         	// 로그인 화면 open
-        	this.gvLoginFrame.set_formurl("frame::frameLogin.xfdl");
+        	this.gvLoginFrame.set_formurl("Board::OB_001.xfdl");
         	this.gvVFrameSet.set_separatesize("0,*,0,0");
         };
 

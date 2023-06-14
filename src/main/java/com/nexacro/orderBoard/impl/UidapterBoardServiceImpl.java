@@ -1,5 +1,6 @@
 package com.nexacro.orderBoard.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,60 @@ public class UidapterBoardServiceImpl implements UidapterBoardService {
 
 	@Autowired
 	private SqlSessionTemplate sqlSession;
-
+	
+	@Override
+	public void deleteOrdList(Map<String, Object> ds_delList) {
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		mapper.deleteOrdList(ds_delList);
+	}
+	
+	@Override
+	public void updateOrdList(Map<String, Object> ds_updOrd) {
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		mapper.updateOrdList(ds_updOrd);
+	}
+	
+	@Override
+	public void insertOrdList(Map<String, Object> ds_regOrd) {
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		
+		// 1. 작업하기에 앞서 해당 고객이 이미 기존에 TB_CUST 테이블에 있는 경우
+		// 중복으로 INSERT하면 안된다.
+		// 따라서, 고객먕, 폰버호, 사업자, 주소가 완전히 일치하는 고객코드가 있을 경우 INSERT하지 않고
+		// 고객이 없을 경우만 INSERT하는 비즈니스 로직
+		String custCode = mapper.checkCustDup(ds_regOrd); // 고객이 있는가를 확인
+		ds_regOrd.put("CUST_CD", custCode); // map안의 CUST_CD key값에 위의 결과를 value로 삽입
+		
+		if("".equals(custCode) || custCode == null) {
+			//고객등록
+			mapper.insertCust(ds_regOrd); // CUST 생성
+			custCode = mapper.checkCustDup(ds_regOrd); // CUST_CD 만 가져옴
+			ds_regOrd.put("CUST_CD", custCode); // ds_regOrd map에 CUST_CD에 신규 CUST_CD 삽입
+		}
+		else {
+			//이미 TB_CUST에 등록된 고객이므로 INSERT할 필요 없다.
+		}
+		mapper.insertOrdList(ds_regOrd); // 신규고객의 CUST_CD 까지 전달
+	}
+	
+	@Override
+	public ArrayList<Map<String, Object>> selectItemList() {
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		return mapper.selectItemList();
+	}
+	
+	@Override
+	public ArrayList<Map<String, Object>> selectOrdList(Map<String, Object> ds_searchList) {
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		return mapper.selectOrdList(ds_searchList);
+	}
+	
+	@Override
+	public ArrayList<Map<String, Object>> selectCommonCode(Map<String, Object> ds_search) {
+		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
+		return mapper.selectCommonCode(ds_search);
+	}
+	
 	@Override
 	public List<Board> retrieve_datalist(Board board) {
 		UiadapterBoardMapper mapper = sqlSession.getMapper(UiadapterBoardMapper.class);
@@ -95,4 +149,5 @@ public class UidapterBoardServiceImpl implements UidapterBoardService {
 		
 		return mapper.selectUserCount();
 	}
+
 }

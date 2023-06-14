@@ -5,7 +5,92 @@
 <mapper namespace="com.nexacro.orderBoard.mapper.UiadapterBoardMapper">
 	
     <!--  POJO -->
-     <select id="retrieve_datalist" parameterType="com.nexacro.orderBoard.object.Board" resultType="com.nexacro.orderBoard.object.Board">
+    <delete id="deleteOrdList" parameterType="java.util.Map">
+    	DELETE FROM TB_ORD
+    	WHERE ORD_NO = #{ORD_NO}
+    </delete>
+    <update id="updateOrdList" parameterType="java.util.Map">
+    	UPDATE TB_ORD
+    	SET ORD_STAT_CD = #{ORD_STAT_CD}
+    	  , ITEM_CD = #{ITEM_CD}
+    	WHERE ORD_NO = #{ORD_NO}
+    </update>
+    <insert id="insertCust" parameterType="java.util.Map">
+    	INSERT INTO TB_CUST(
+    		CUST_CD, CUST_GBCD, CUST_NM, PHONE, BIRTHBISNO, ADDR, REG_DT, UPD_DT
+    	) VALUES(
+    		CUST_SEQ.NEXTVAL
+    		, #{CUST_GBCD}
+    		, #{CUST_NM}
+    		, #{PHONE}
+    		, #{BIR_BIZ_NO}
+    		, #{ADDR}
+    		, SYSDATE
+    		, SYSDATE
+    	)
+    </insert>
+   	<select id="checkCustDup" parameterType="java.util.Map" resultType = "String">
+   		SELECT CUST_CD
+   		FROM TB_CUST
+   		WHERE CUST_GBCD = #{CUST_GBCD}
+   		AND CUST_NM = #{CUST_NM}
+   		AND PHONE = #{PHONE}
+   		AND BIRTHBISNO = #{BIR_BIZ_NO}
+   		AND ADDR = #{ADDR}
+   	</select>
+    <insert id="insertOrdList" parameterType="java.util.Map">
+    	INSERT INTO TB_ORD(
+    		ORD_NO, ITEM_CD, CUST_CD, ORD_STAT_CD, REG_DT, UPD_DT
+    	) VALUES(
+    		TO_CHAR(SYSDATE,'YYYYMMDD') || LPAD(ORDER_SEQ.NEXTVAL,4,'0')
+    		, #{ITEM_CD}
+    		, #{CUST_CD}
+    		, 'A' <!-- 최초 주문 등록 시 주문 대기상태가 된다. -->
+    		, SYSDATE
+    		, SYSDATE
+    	)
+    </insert>
+    <select id="selectItemList" resultType="java.util.Map">
+    	SELECT ITEM_CD, ITEM_NM
+		FROM TB_ITEM
+    </select>
+    <select id="selectOrdList" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT ORD.ORD_NO							AS ORD_NO
+			 , FN_CODE_NM('001', ORD.ORD_STAT_CD)	AS ORD_STAT_NM
+			 , ORD.CUST_CD							AS CUST_NO
+			 , CUST.CUST_NM							AS CUST_NM
+			 , FN_CODE_NM('002', CUST.CUST_GBCD)	AS CUST_GBCD_NM
+			 , CUST.PHONE							AS PHONE
+			 , CUST.ADDR							AS ADDR
+			 , ITEM.ITEM_NM							AS ITEM_NM
+			 , ORD.REG_DT							AS REG_DT
+		FROM TB_ORD ORD
+		LEFT JOIN TB_CUST CUST ON ORD.CUST_CD = CUST.CUST_CD
+		LEFT JOIN TB_ITEM ITEM ON ORD.ITEM_CD = ITEM.ITEM_CD
+		WHERE 1=1
+			<if test="ORD_NO != null and ORD_NO !=''">
+				AND ORD.ORD_NO = #{ORD_NO}
+			</if>
+			<if test="CUST_NM != null and CUST_NM !=''">
+				AND CUST.CUST_NM = #{CUST_NM}
+			</if>
+			<if test="COMP_YN == 'true'">
+				AND CUST.CUST_GBCD = 'C'
+			</if>
+			<if test="ORD_STAT_CD != null and ORD_STAT_CD !=''">
+				AND ORD.ORD_STAT_CD = #{ORD_STAT_CD}
+			</if>
+			<if test="CUST_GBCD != null and CUST_GBCD !=''">
+				AND CUST.CUST_GBCD = #{CUST_GBCD}
+			</if>
+    </select>
+    <select id="selectCommonCode" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT CD_VAL1,
+    			CD_NM1
+    	FROM TB_CD_MST
+    	WHERE CD_VAL = #{CD_VAL}
+    </select>
+    <select id="retrieve_datalist" parameterType="com.nexacro.orderBoard.object.Board" resultType="com.nexacro.orderBoard.object.Board">
             select title 
                  , regId 
                  , regDate 

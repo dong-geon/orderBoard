@@ -1,5 +1,6 @@
 package com.nexacro.orderBoard.web;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,63 @@ public class UidapterBoardController {
 	@Autowired(required = true)
 	private UidapterBoardService uidapterSampleService;
 	
+	@RequestMapping(value = "/orderBoard/deleteOrdList.do")
+	public NexacroResult deleteOrdList(@ParamDataSet(name = "ds_delList") Map<String,Object> ds_delList) throws NexacroException {
+		NexacroResult result = new NexacroResult();
+		
+		uidapterSampleService.deleteOrdList(ds_delList);
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/orderBoard/updateOrdList.do")
+	public NexacroResult updateOrdList(@ParamDataSet(name = "ds_updOrd") Map<String,Object> ds_updOrd) throws NexacroException {
+		NexacroResult result = new NexacroResult();
+		
+		uidapterSampleService.updateOrdList(ds_updOrd);
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/orderBoard/insertOrdList.do")
+	public NexacroResult insertOrdList(@ParamDataSet(name = "ds_regOrd") Map<String,Object> ds_regOrd) throws NexacroException {
+		NexacroResult result = new NexacroResult();
+		
+		uidapterSampleService.insertOrdList(ds_regOrd);
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/orderBoard/selectItemList.do")
+	public NexacroResult selectItemList() throws NexacroException {
+		NexacroResult result = new NexacroResult();
+		ArrayList<Map<String, Object>> ds_itemCombo = new ArrayList<Map<String, Object>>();
+		
+		ds_itemCombo = uidapterSampleService.selectItemList();
+		result.addDataSet("ds_itemCombo", ds_itemCombo);
+		return result;
+	}
+	
+	@RequestMapping(value = "/orderBoard/selectCommonCode.do")
+	public NexacroResult selectCommonCode(@ParamDataSet(name = "ds_search") Map<String,Object> ds_search) throws NexacroException {
+		NexacroResult result = new NexacroResult();
+		ArrayList<Map<String, Object>> ds_commonCode = new ArrayList<Map<String, Object>>();
+		
+		ds_commonCode = uidapterSampleService.selectCommonCode(ds_search);
+		result.addDataSet("ds_commonCode", ds_commonCode);
+		return result;
+	}
+	
+	@RequestMapping(value = "/orderBoard/selectOrdList.do")
+	public NexacroResult selectOrdList(@ParamDataSet(name = "ds_searchList") Map<String,Object> ds_searchList) throws NexacroException {
+		NexacroResult result = new NexacroResult();
+		ArrayList<Map<String, Object>> ds_list = new ArrayList<Map<String, Object>>();
+		
+		ds_list = uidapterSampleService.selectOrdList(ds_searchList);
+		System.out.println(ds_list);
+		result.addDataSet("ds_list", ds_list);
+		return result;
+	}
 	
 	@RequestMapping(value = "/orderBoard/healthCheck.do")
 	public NexacroResult healthCheck() throws NexacroException {

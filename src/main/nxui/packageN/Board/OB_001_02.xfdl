@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FDL version="2.1">
+  <Form id="OB_001_02" width="400" height="200" titletext="주문수정팝업" onload="OB_001_02_onload">
+    <Layouts>
+      <Layout height="200" width="400">
+        <Static id="sta00_02" taborder="0" text="주문 상태" left="20" top="20" width="164" height="35" font="bold 14px/normal &quot;Gulim&quot;" textAlign="center" onclick="sta00_02_onclick"/>
+        <Combo id="cbo_ordStatNm" taborder="1" text="" left="200" top="25" width="170" height="30" value="" index="-1" innerdataset="ds_ordStatCombo" codecolumn="CD_VAL1" datacolumn="CD_NM1" displaynulltext="선택"/>
+        <Static id="sta00_02_00" taborder="2" text="주문 상품" left="20" top="65" width="164" height="35" font="bold 14px/normal &quot;Gulim&quot;" textAlign="center" onclick="sta00_02_onclick"/>
+        <Combo id="cbo_itemNm" taborder="3" text="" left="200" top="70" width="170" height="30" value="" index="-1" innerdataset="ds_itemCombo" codecolumn="ITEM_CD" datacolumn="ITEM_NM" displaynulltext="선택"/>
+        <Button id="btn_changeOrd" taborder="4" text="주문 수정" left="41" top="125" width="122" height="50" onclick="btn_changeOrd_onclick" enable="true" visible="true"/>
+        <Button id="btn_exit" taborder="5" text="닫기" left="224" top="125" width="122" height="50" onclick="btn_exit_onclick" enable="true" visible="true"/>
+      </Layout>
+    </Layouts>
+    <Script type="xscript5.1"><![CDATA[
+this.OB_001_02_onload = function(obj:nexacro.Form,e:nexacro.LoadEventInfo)
+{
+	// alert("onload 함수 실행");
+	//this.alert(this.getOwnerFrame().ordNo);
+	// 1. 주문상태 콤보박스 초기화
+	this.fn_setOrdStatCbo();
+	
+	// 2. 주문상태 콤보박스 초기화
+	this.fn_setItemCbo();
+};
+
+this.btn_changeOrd_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// alert("주문 수정 버튼 클릭");
+	this.ds_updOrd.clearData();
+	this.ds_updOrd.addRow();
+	this.ds_updOrd.setColumn(0, "ORD_STAT_CD", this.cbo_ordStatNm.value);
+	this.ds_updOrd.setColumn(0, "ITEM_CD", this.cbo_itemNm.value);
+	this.ds_updOrd.setColumn(0, "ORD_NO", this.getOwnerFrame().ordNo);
+	trace("ORD_STAT_CD		:" + this.ds_updOrd.getColumn(0,"ORD_STAT_CD"));
+	trace("ITEM_CD		:" + this.ds_updOrd.getColumn(0,"ITEM_CD"));
+	trace("ORD_NO		:" + this.ds_updOrd.getColumn(0,"ORD_NO"));
+	
+	var strSvcId = "updateOrdList";		
+	var strSvcUrl = "updateOrdList.do"; 		
+	var inData = "ds_updOrd=ds_updOrd";												
+	var outData = "";		// 서버로 부터 받을 데이터는 없다.												
+	var strAvg = "";				
+	var callBackFnc = "fnCallback";
+	this.gfnTransaction(strSvcId	,
+						strSvcUrl	,
+						inData		,
+						outData		,
+						strAvg		,
+						callBackFnc);	
+};
+
+this.btn_exit_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// alert("닫기 버튼 클릭");
+	this.close();
+};
+
+/*
+* 사용자 정의 함수
+*/
+this.fn_setOrdStatCbo = function()
+{
+	this.ds_searchCombo.clearData();
+	this.ds_searchCombo.addRow();
+	this.ds_searchCombo.setColumn(0, "CD_VAL", "001");
+	trace("ds_searchCombo	:" + this.ds_searchCombo.getColumn(0,"CD_VAL"));
+	
+	var strSvcId = "selectCommonCode";		
+	var strSvcUrl = "selectCommonCode.do"; 	
+	var inData = "ds_search=ds_searchCombo";										
+	var outData = "ds_ordStatCombo=ds_commonCode";											
+	var strAvg = "";						
+	var callBackFnc = "fnCallback";		
+										
+	this.gfnTransaction(strSvcId	,
+						strSvcUrl	,
+						inData		,
+						outData		,
+						strAvg		,
+						callBackFnc);		
+}
+
+this.fn_setItemCbo = function()
+{
+	var strSvcId = "selectItemList";		
+	var strSvcUrl = "selectItemList.do"; 		
+	var inData = "";										
+	var outData = "ds_itemCombo = ds_itemCombo";
+												
+	var strAvg = "";							
+	var callBackFnc = "fnCallback";		
+	this.gfnTransaction(strSvcId	,
+						strSvcUrl	,
+						inData		,
+						outData		,
+						strAvg		,
+						callBackFnc);
+}
+/*
+*CallBack Function(서버 수신 후 후처리 영역)
+*/
+this.fnCallback = function(svcID, errorCode, errorMsg)
+{
+	if(errorCode < 0){
+		alert("작업 실패 에러코드\n " + errorCode + "\n" + errorMsg);
+		return 0;
+	}
+	switch(svcID)
+	{
+		case "selectCommonCode" :
+			this.ds_ordStatCombo.insertRow(0); // 0번째 row에 라인 삽입
+			this.ds_ordStatCombo.setColumn(0,"CD_VAL1", "");
+			this.ds_ordStatCombo.setColumn(0,"CD_NM1", "전체");
+			break;
+			
+		case "updateOrdList" :
+			this.alert("주문 수정 완료");
+			this.close();
+			break;	
+	}
+}
+]]></Script>
+    <Objects>
+      <Dataset id="ds_searchCombo">
+        <ColumnInfo>
+          <Column id="CD_VAL" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
+      <Dataset id="ds_ordStatCombo">
+        <ColumnInfo>
+          <Column id="CD_VAL1" type="STRING" size="256"/>
+          <Column id="CD_NM1" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
+      <Dataset id="ds_itemCombo">
+        <ColumnInfo>
+          <Column id="ITEM_CD" type="STRING" size="256"/>
+          <Column id="ITEM_NM" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
+      <Dataset id="ds_updOrd">
+        <ColumnInfo>
+          <Column id="ORD_STAT_CD" type="STRING" size="256"/>
+          <Column id="ITEM_CD" type="STRING" size="256"/>
+          <Column id="ORD_NO" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
+    </Objects>
+  </Form>
+</FDL>

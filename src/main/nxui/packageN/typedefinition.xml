@@ -55,6 +55,7 @@
     <Service prefixid="pattern" type="form" cachelevel="session" url="./pattern/" version="0" communicationversion="0" include_subdir="false"/>
     <Service prefixid="xcssrc" type="resource" url="./_resource_/_xcss_/" cachelevel="session" include_subdir="false"/>
     <Service prefixid="images" type="file" cachelevel="session" url="./images/" version="0" communicationversion="0" include_subdir="false"/>
+    <Service prefixid="Board" type="form" url="./Board/" version="0" cachelevel="session" include_subdir="false" communicationversion="0"/>
   </Services>
   <Protocols/>
   <Update/>

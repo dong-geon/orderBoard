@@ -1,5 +1,6 @@
 package com.nexacro.orderBoard.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,23 @@ import com.nexacro.orderBoard.object.Board;
  */
 @Mapper
 public interface UiadapterBoardMapper {
+	
+	public void deleteOrdList(Map<String, Object> ds_delList);
+	
+	public void updateOrdList(Map<String, Object> ds_updOrd);
+	
+	public void insertCust(Map<String, Object> ds_regOrd);
+	
+	public String checkCustDup(Map<String, Object> ds_regOrd);
+
+	public void insertOrdList(Map<String, Object> ds_regOrd);
+	
+	public ArrayList<Map<String, Object>> selectItemList();
+	
+	public ArrayList<Map<String, Object>> selectCommonCode(Map<String, Object> ds_search);
+	
+	public ArrayList<Map<String, Object>> selectOrdList(Map<String, Object> ds_searchList);
+	
 	public List<Board> retrieve_datalist(Board board);
 
 	public List<Map<String, Object>> retrieve_datalist_map(Map<String, String> board);
@@ -42,4 +60,5 @@ public interface UiadapterBoardMapper {
 	public void delete_board_map(Map<String, Object> board);
 	
 	public int selectUserCount();
+
 }
